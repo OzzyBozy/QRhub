@@ -1,9 +1,16 @@
+/*
+ * Copyright (c) 2025 OzzyBozy
+ * Custom Non‑Commercial Open Source License — see LICENSE.txt
+ */
+
 package com.ozzybozy.qrhub
 
 import android.Manifest
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,6 +19,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -87,6 +95,21 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             })
+
+            view.setOnClickListener {
+                if (item.url.isNotEmpty()) {
+                    try {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
+                        startActivity(intent)
+                    } catch (e: ActivityNotFoundException) {
+                        Toast.makeText(this, "No app can handle this URL", Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        Toast.makeText(this, "Invalid URL", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this, "No URL available for this item", Toast.LENGTH_SHORT).show()
+                }
+            }
             qrContainer.addView(view)
         }
     }
@@ -107,6 +130,7 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, 101)
     }
 
+    @Deprecated("This method has been deprecated in favor of using the Activity Result API")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 101 && resultCode == RESULT_OK) {
