@@ -27,13 +27,35 @@
             android:layout_gravity="center"/>
     </FrameLayout>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
         <Button
             android:id="@+id/scanButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginVertical="16dp"
-            android:text="Scan QR Code"/>
+            android:text="Scan QR Code"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Spinner
+            android:id="@+id/filterSpinner"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/ic_filter"
+            android:spinnerMode="dropdown"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <ScrollView
         android:layout_width="match_parent"
