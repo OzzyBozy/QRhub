@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
     private fun refreshQrDisplay() {
         qrContainer.removeAllViews()
 
-        for (item in qrList) {
+        for ((index, item) in qrList.withIndex()) {
             val view = LayoutInflater.from(this).inflate(R.layout.qr_item, qrContainer, false)
             val nameEditText = view.findViewById<EditText>(R.id.qrText)
             val dateTextView = view.findViewById<TextView>(R.id.dateText)
@@ -89,8 +89,8 @@ class MainActivity : AppCompatActivity() {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable?) {
                     val newText = s.toString()
-                    if (item.text != newText) {
-                        item.text = newText
+                    if (qrList[index].text != newText) {
+                        qrList[index].text = newText
                         QRStorageHelper.saveQRList(this@MainActivity, qrList)
                     }
                 }
