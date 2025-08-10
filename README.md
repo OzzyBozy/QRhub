@@ -105,4 +105,4 @@ The full license text is available here: [LICENSE.txt](LICENSE.txt).
 
 ---
 *Thank you for scanning QRhub. and always remember,  
-With great QR codes come great catalogues*
+With great QR codes come great QR catalogues.*
