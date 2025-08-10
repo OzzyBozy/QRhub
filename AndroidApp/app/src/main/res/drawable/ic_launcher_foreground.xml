@@ -4,9 +4,9 @@
         android:drawable="@drawable/qrlogo"
         android:width="48dp"
         android:height="48dp"
-        android:start="12dp"
-        android:end="12dp"
-        android:bottom="12dp"
-        android:top="12dp"
+        android:start="14dp"
+        android:end="14dp"
+        android:bottom="14dp"
+        android:top="14dp"
         android:gravity="center" />
 </layer-list>
