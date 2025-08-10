@@ -2,7 +2,6 @@
  * Copyright (c) 2025 OzzyBozy
  * Custom Non‑Commercial Open Source License — see LICENSE.txt
  */
-
 package com.ozzybozy.qrhub
 
 import android.Manifest
@@ -27,6 +26,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -42,6 +42,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.UUID
 
 class MainActivity : AppCompatActivity() {
 
@@ -107,8 +108,8 @@ class MainActivity : AppCompatActivity() {
             FilterType.FAVORITE -> qrList.filter { it.favorite }
         }
 
-        for ((originalIndex, item) in qrList.withIndex()) {
-            if (!displayList.contains(item)) continue
+        for (item in displayList) {
+
             val view = LayoutInflater.from(this).inflate(R.layout.qr_item, qrContainer, false)
             val nameEditText = view.findViewById<EditText>(R.id.qrText)
             val dateTextView = view.findViewById<TextView>(R.id.dateText)
@@ -145,22 +146,25 @@ class MainActivity : AppCompatActivity() {
                 qrImageView.setImageDrawable(null)
             }
 
+            val itemId = item.id
 
             nameEditText.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable?) {
                     val newText = s.toString()
-                    if (originalIndex >= 0 && originalIndex < qrList.size && qrList[originalIndex].text != newText) {
-                        qrList[originalIndex].text = newText
+                    val itemToUpdate = qrList.find { it.id == itemId }
+                    if (itemToUpdate != null && itemToUpdate.text != newText) {
+                        itemToUpdate.text = newText
                         QRStorageHelper.saveQRList(this@MainActivity, qrList)
                     }
                 }
             })
 
             favButton.setOnCheckedChangeListener { _, isChecked ->
-                if (originalIndex >= 0 && originalIndex < qrList.size) {
-                    qrList[originalIndex].favorite = isChecked
+                val itemToUpdate = qrList.find { it.id == itemId }
+                if (itemToUpdate != null) {
+                    itemToUpdate.favorite = isChecked
                     QRStorageHelper.saveQRList(this@MainActivity, qrList)
                     if (currentFilterType == FilterType.FAVORITE) {
                         refreshQrDisplay()
@@ -183,6 +187,22 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             qrContainer.addView(view)
+            view.setOnLongClickListener {
+                AlertDialog.Builder(this@MainActivity)
+                    .setTitle("Delete Item")
+                    .setMessage("Do you want to delete this item?")
+                    .setPositiveButton("Yes") { _, _ ->
+                        val itemToRemove = qrList.find { it.id == itemId }
+                        if (itemToRemove != null) {
+                            qrList.remove(itemToRemove)
+                            QRStorageHelper.saveQRList(this@MainActivity, qrList)
+                            refreshQrDisplay()
+                        }
+                    }
+                    .setNegativeButton("No", null)
+                    .show()
+                true
+            }
         }
     }
 
@@ -213,17 +233,15 @@ class MainActivity : AppCompatActivity() {
                 qrList.add(0, newItem)
                 QRStorageHelper.saveQRList(this, qrList)
                 refreshQrDisplay()
-                val newItemIndex = qrList.indexOf(newItem)
-                if (newItemIndex != -1) {
-                    lifecycleScope.launch {
-                        downloadFaviconForQRItem(newItem, newItemIndex)
-                    }
+                lifecycleScope.launch {
+                    downloadFaviconForQRItem(newItem.id, newItem.url)
                 }
             }
         }
     }
 
     data class QRItem(
+        val id: String = UUID.randomUUID().toString(),
         var text: String,
         val url: String,
         val dateTime: String,
@@ -267,16 +285,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-   private suspend fun downloadFaviconForQRItem(itemPassed: QRItem, indexInList: Int) {
+   private suspend fun downloadFaviconForQRItem(itemPassedId: String, itemUrl: String) {
         withContext(Dispatchers.IO) {
             try {
-                val originalUrlString = itemPassed.url
-                if (originalUrlString.isEmpty()) {
+                if (itemUrl.isEmpty()) {
                     return@withContext
                 }
 
                 val originalUri = try {
-                    Uri.parse(originalUrlString)
+                    Uri.parse(itemUrl)
                 } catch (e: Exception) {
                     return@withContext
                 }
@@ -324,9 +341,10 @@ class MainActivity : AppCompatActivity() {
                             inputStream.copyTo(outputStream)
 
                             downloadedFaviconPath = faviconFile.absolutePath
-                            break
+                            break 
                         }
-                } finally {
+                    } catch (e: Exception) {
+                    } finally {
                         inputStream?.close()
                         outputStream?.close()
                         connection?.disconnect()
@@ -334,16 +352,19 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 downloadedFaviconPath?.let { path ->
-                    if (indexInList >= 0 && indexInList < qrList.size && qrList[indexInList].url == itemPassed.url) {
-                        qrList[indexInList].faviconPath = path
-                        QRStorageHelper.saveQRList(this@MainActivity, qrList)
-                        withContext(Dispatchers.Main) {
-                            refreshQrDisplay()
+                    val itemToUpdate = qrList.find { it.id == itemPassedId }
+                    if (itemToUpdate != null) {
+                        if (itemToUpdate.url == itemUrl) {
+                            itemToUpdate.faviconPath = path
+                            QRStorageHelper.saveQRList(this@MainActivity, qrList)
+                            withContext(Dispatchers.Main) {
+                                refreshQrDisplay()
+                            }
                         }
-                    } else {
-                        }
+                    }
                 }
-            } catch (e: Exception) { }
+            } catch (e: Exception) {
+            }
         }
     }
 }
