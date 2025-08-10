@@ -104,5 +104,5 @@ The code is **open source** — but with important restrictions:
 The full license text is available here: [LICENSE.txt](LICENSE.txt).
 
 ---
-*Thank you for scanning QRhub.  
-Enjoy your tailored QR catalogue.*
+*Thank you for scanning QRhub. and always remember,  
+With great QR codes come great catalogues*
