@@ -52,12 +52,18 @@ QR Hub acts as a personal database and quick access tool for any information cap
 
 ---
 
-## UI example
+## Example
+<table>
+  <tr>
+    <td align="center" width="25%">
+      <p><strong>UI preview</strong></p>
+      <img src="Images/UIexample.png" alt="UI example" width="200"/>
+    </td>
+  </tr>
+</table>
 
-<img src="Images/UIexample.png" alt="UI example"/>
 
 ---
-
 
 ## How to Build
 
@@ -98,5 +104,5 @@ The code is **open source** — but with important restrictions:
 The full license text is available here: [LICENSE.txt](LICENSE.txt).
 
 ---
-*Thank you for scanning QRhub.
-Enjoy your tailored QR catalogue.*
+*Thank you for scanning QRhub. And always remember,  
+With great QR codes come great QR catalogues.*
