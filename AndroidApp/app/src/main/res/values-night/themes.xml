@@ -1,7 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.QRhub" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <style name="Theme.QRhub" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="qr_Background">@color/dark_beige</item>
+        <item name="qr_red1">@color/red</item>
+        <item name="qr_red2">@color/dark_red</item>
+        <item name="qr_blue1">@color/blue</item>
+        <item name="qr_blue2">@color/dark_blue</item>
+        <item name="qr_text">@color/beige</item>
     </style>
 </resources>

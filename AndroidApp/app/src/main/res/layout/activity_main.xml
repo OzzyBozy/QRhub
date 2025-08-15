@@ -5,51 +5,53 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/topAppBar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="?attr/colorPrimary"
-            app:navigationIcon="@drawable/ic_menu" />
-
-        <TextView
-            android:id="@+id/customTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="QR HUB"
-            android:textColor="@android:color/white"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:layout_gravity="center"/>
-    </FrameLayout>
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/banner"
+        android:layout_gravity="center"
+        android:background="?attr/qr_Background"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:background="?attr/qr_Background">
 
         <Button
             android:id="@+id/scanButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Scan QR Code"
+            android:layout_width="128dp"
+            android:layout_height="64dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@drawable/addbox"/>
+
+        <CheckBox
+            android:id="@+id/favButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:button="@null"
+            android:background="@drawable/sort_toggle"
+            android:checked="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/filterSpinner"
+            android:visibility="gone"/>
 
         <Spinner
             android:id="@+id/filterSpinner"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/ic_filter"
             android:spinnerMode="dropdown"
+            android:dropDownVerticalOffset="8dp"
+            app:overlapAnchor="false"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -59,8 +61,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="match_parent"
+        android:background="?attr/qr_Background">
         <LinearLayout
             android:id="@+id/qrContainer"
             android:layout_width="match_parent"

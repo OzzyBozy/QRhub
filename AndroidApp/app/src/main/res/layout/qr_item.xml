@@ -8,14 +8,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:background="@android:color/darker_gray"
+        android:background="@drawable/qrbox"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/qrImage"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            android:layout_margin="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
             android:gravity="center" />
 
         <LinearLayout
@@ -29,15 +30,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-                <EditText
-                    android:id="@+id/qrText"
+                <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="https://example.com"
-                    android:textAlignment="textStart"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:background="?attr/qr_red2"
+                    android:layout_marginEnd="2dp"
+                    android:layout_marginTop="4dp">
+                    <EditText
+                        android:id="@+id/qrText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:scrollHorizontally="true"
+                        android:inputType="textUri"
+                        android:text="https://example.com"
+                        android:textAlignment="textStart"
+                        android:textColor="?attr/qr_text"
+                        android:textSize="16sp"
+                        android:backgroundTint="?attr/qr_red1"
+                        android:padding="6dp"/>
+                </LinearLayout>
 
                 <CheckBox
                     android:id="@+id/favButton"
@@ -45,7 +60,9 @@
                     android:layout_height="wrap_content"
                     android:background="@null"
                     android:button="@drawable/star_toggle"
-                    android:checked="false" />
+                    android:checked="false"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="6dp"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -55,9 +72,10 @@
                     android:id="@+id/dateText"
                     android:layout_width="match_parent"
                     android:layout_height="24dp"
+                    android:layout_marginTop="4dp"
                     android:text="dd/mm/yy"
                     android:textAlignment="textStart"
-                    android:textColor="@color/white"
+                    android:textColor="?attr/qr_text"
                     android:textSize="16sp" />
             </LinearLayout>
         </LinearLayout>

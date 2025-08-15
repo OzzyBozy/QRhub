@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="qr_Background" format="reference|color" />
+    <attr name="qr_red1" format="reference|color" />
+    <attr name="qr_red2" format="reference|color" />
+    <attr name="qr_blue1" format="reference|color" />
+    <attr name="qr_blue2" format="reference|color" />
+    <attr name="qr_text" format="reference|color" />
+</resources>
