@@ -17,21 +17,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.Spinner
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.ozzybozy.qrhub.databinding.ActivityMainBinding
+import com.ozzybozy.qrhub.databinding.QrItemBinding
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream
@@ -47,16 +44,12 @@ import java.util.UUID
 class MainActivity : AppCompatActivity() {
 
     private val qrList = mutableListOf<QRItem>()
-    private lateinit var qrContainer: LinearLayout
-    private lateinit var filterSpinner: Spinner
+    private lateinit var binding: ActivityMainBinding
 
     private enum class FilterType {
         DATE, FAVORITE
     }
     private var currentFilterType = FilterType.DATE
-
-    private val dateTimeFormat = SimpleDateFormat("dd/MM/yy HH:mm:ss", Locale.getDefault())
-    private val displayDateFormat = SimpleDateFormat("dd/MM/yy", Locale.getDefault())
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -66,19 +59,35 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val scannerLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val scannedText = result.data?.getStringExtra("scanned_code")
+            scannedText?.let {
+                val currentDateTime = SimpleDateFormat("dd/MM/yy HH:mm:ss", Locale.getDefault()).format(Date())
+                val newItem = QRItem(text = it, url = it, dateTime = currentDateTime, favorite = false, faviconPath = null)
+                qrList.add(0, newItem)
+                QRStorageHelper.saveQRList(this, qrList)
+                refreshQrDisplay()
+                lifecycleScope.launch {
+                    downloadFaviconForQRItem(newItem.id, newItem.url)
+                }
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        qrContainer = findViewById(R.id.qrContainer)
-        filterSpinner = findViewById(R.id.filterSpinner)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val filterOptions = arrayOf("Sort by Date", "Show Favorites")
         val adapter = ArrayAdapter(this, R.layout.spinner_item_no_text, filterOptions)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        filterSpinner.adapter = adapter
+        binding.filterSpinner.adapter = adapter
 
-        filterSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.filterSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 currentFilterType = when (position) {
                     0 -> FilterType.DATE
@@ -90,8 +99,7 @@ class MainActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
 
-        val scanButton = findViewById<Button>(R.id.scanButton)
-        scanButton.setOnClickListener {
+        binding.scanButton.setOnClickListener {
             checkCameraPermissionAndScan()
         }
 
@@ -101,7 +109,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refreshQrDisplay() {
-        qrContainer.removeAllViews()
+        binding.qrContainer.removeAllViews()
 
         val displayList = when (currentFilterType) {
             FilterType.DATE -> qrList
@@ -109,48 +117,43 @@ class MainActivity : AppCompatActivity() {
         }
 
         for (item in displayList) {
+            val itemBinding = QrItemBinding.inflate(LayoutInflater.from(this), binding.qrContainer, false)
+            
+            itemBinding.qrText.isSaveEnabled = false
+            itemBinding.favButton.id = View.NO_ID
 
-            val view = LayoutInflater.from(this).inflate(R.layout.qr_item, qrContainer, false)
-            val nameEditText = view.findViewById<EditText>(R.id.qrText)
-            val dateTextView = view.findViewById<TextView>(R.id.dateText)
-            val qrImageView = view.findViewById<ImageView>(R.id.qrImage)
-            val favButton = view.findViewById<CheckBox>(R.id.favButton)
-
-            nameEditText.isSaveEnabled = false
-            favButton.id = View.NO_ID
-
-            nameEditText.setText(item.text)
+            itemBinding.qrText.setText(item.text)
 
             val displayDateOnly: String = try {
-                val fullDateObject = dateTimeFormat.parse(item.dateTime)
+                val fullDateObject = SimpleDateFormat("dd/MM/yy HH:mm:ss", Locale.getDefault()).parse(item.dateTime)
                 if (fullDateObject != null) {
-                    displayDateFormat.format(fullDateObject)
+                    SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(fullDateObject)
                 } else {
                     item.dateTime.split(" ")[0]
                 }
-            } catch (e: ParseException) {
+            } catch (_: ParseException) {
                 item.dateTime.split(" ")[0]
             }
-            dateTextView.text = displayDateOnly
+            itemBinding.dateText.text = displayDateOnly
 
             item.faviconPath?.let { path ->
                 if (path.isNotEmpty()) {
                     val faviconFile = File(path)
                     if (faviconFile.exists()) {
-                        qrImageView.setImageURI(Uri.fromFile(faviconFile))
+                        itemBinding.qrImage.setImageURI(Uri.fromFile(faviconFile))
                     } else {
-                         qrImageView.setImageDrawable(null)
+                        itemBinding.qrImage.setImageDrawable(null)
                     }
                 } else {
-                     qrImageView.setImageDrawable(null)
+                    itemBinding.qrImage.setImageDrawable(null)
                 }
             } ?: run {
-                qrImageView.setImageDrawable(null)
+                itemBinding.qrImage.setImageDrawable(null)
             }
 
             val itemId = item.id
 
-            nameEditText.addTextChangedListener(object : TextWatcher {
+            itemBinding.qrText.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable?) {
@@ -163,9 +166,9 @@ class MainActivity : AppCompatActivity() {
                 }
             })
 
-            favButton.setOnCheckedChangeListener(null)
-            favButton.isChecked = item.favorite
-            favButton.setOnCheckedChangeListener { _, isChecked ->
+            itemBinding.favButton.setOnCheckedChangeListener(null)
+            itemBinding.favButton.isChecked = item.favorite
+            itemBinding.favButton.setOnCheckedChangeListener { _, isChecked ->
                 val itemToUpdate = qrList.find { it.id == itemId }
                 if (itemToUpdate != null && itemToUpdate.favorite != isChecked) {
                     itemToUpdate.favorite = isChecked
@@ -176,22 +179,22 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            view.setOnClickListener {
+            itemBinding.root.setOnClickListener {
                 if (item.url.isNotEmpty()) {
                     try {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.url))
+                        val intent = Intent(Intent.ACTION_VIEW, item.url.toUri())
                         startActivity(intent)
-                    } catch (e: ActivityNotFoundException) {
+                    } catch (_: ActivityNotFoundException) {
                         Toast.makeText(this, "No app can handle this URL", Toast.LENGTH_SHORT).show()
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                         Toast.makeText(this, "Invalid URL", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Toast.makeText(this, "No URL available for this item", Toast.LENGTH_SHORT).show()
                 }
             }
-            qrContainer.addView(view)
-            view.setOnLongClickListener {
+            binding.qrContainer.addView(itemBinding.root)
+            itemBinding.root.setOnLongClickListener {
                 AlertDialog.Builder(this@MainActivity)
                     .setTitle("Delete Item")
                     .setMessage("Do you want to delete this item?")
@@ -223,25 +226,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun launchScanner() {
         val intent = Intent(this, ScannerActivity::class.java)
-        startActivityForResult(intent, 101)
-    }
-
-    @Deprecated("This method has been deprecated in favor of using the Activity Result API")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 101 && resultCode == RESULT_OK) {
-            val scannedText = data?.getStringExtra("scanned_code")
-            scannedText?.let {
-                val currentDateTime = dateTimeFormat.format(Date())
-                val newItem = QRItem(text = it, url = it, dateTime = currentDateTime, favorite = false, faviconPath = null)
-                qrList.add(0, newItem)
-                QRStorageHelper.saveQRList(this, qrList)
-                refreshQrDisplay()
-                lifecycleScope.launch {
-                    downloadFaviconForQRItem(newItem.id, newItem.url)
-                }
-            }
-        }
+        scannerLauncher.launch(intent)
     }
 
     data class QRItem(
@@ -257,16 +242,17 @@ class MainActivity : AppCompatActivity() {
         private const val PREFS_NAME = "qr_prefs"
         private const val KEY_QR_LIST = "qr_list"
         private val gson = Gson()
-        private val storageDateTimeFormat = SimpleDateFormat("dd/MM/yy HH:mm:ss", Locale.getDefault())
 
         fun saveQRList(context: Context, list: List<QRItem>) {
-            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            val prefs = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
             val json = gson.toJson(list)
-            prefs.edit().putString(KEY_QR_LIST, json).apply()
+            prefs.edit {
+                putString(KEY_QR_LIST, json)
+            }
         }
 
         fun loadQRList(context: Context): MutableList<QRItem> {
-            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            val prefs = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
             val json = prefs.getString(KEY_QR_LIST, null)
             return if (json != null) {
                 try {
@@ -274,13 +260,13 @@ class MainActivity : AppCompatActivity() {
                     val loadedList: MutableList<QRItem> = gson.fromJson(json, type)
                     loadedList.sortWith(compareByDescending { item ->
                         try {
-                            storageDateTimeFormat.parse(item.dateTime)
-                        } catch (e: ParseException) {
+                            SimpleDateFormat("dd/MM/yy HH:mm:ss", Locale.getDefault()).parse(item.dateTime)
+                        } catch (_: ParseException) {
                             null
                         }
                     })
                     loadedList
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     mutableListOf()
                 }
             } else {
@@ -297,8 +283,8 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 val originalUri = try {
-                    Uri.parse(itemUrl)
-                } catch (e: Exception) {
+                    itemUrl.toUri()
+                } catch (_: Exception) {
                     return@withContext
                 }
 
@@ -345,9 +331,9 @@ class MainActivity : AppCompatActivity() {
                             inputStream.copyTo(outputStream)
 
                             downloadedFaviconPath = faviconFile.absolutePath
-                            break 
+                            break
                         }
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                     } finally {
                         inputStream?.close()
                         outputStream?.close()
@@ -367,7 +353,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
             }
         }
     }
