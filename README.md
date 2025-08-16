@@ -21,12 +21,7 @@ Welcome to QR Hub, your personal QR code catalogue built for all your link relat
 - **QR Code Scanning**  
   Use the device camera to scan QR codes quickly.
 - **QR Code Storage**  
-  Save scanned QR codes locally with:
-  - Decoded text/data
-  - URL
-  - Scan date & time
-  - Favorite status
-  - An image of the site
+  Save scanned QR codes locally.
 - **Display & Management**  
   - View all saved QR codes in a scrollable list
   - Editable QR code names
