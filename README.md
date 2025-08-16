@@ -1,4 +1,8 @@
-# QR Hub
+<picture>
+  <source srcset="Images/bannerDARK.png" media="(prefers-color-scheme: dark)" />
+  <img src="Images/bannerLIGHT.png" alt="header" />
+</picture> 
+
 
 Welcome to QR Hub, your personal QR code catalogue built for all your link related quick access and archiving needs.
 
@@ -56,8 +60,10 @@ QR Hub acts as a personal database and quick access tool for any information cap
 <table>
   <tr>
     <td align="center" width="25%">
-      <p><strong>UI preview</strong></p>
-      <img src="Images/UIexample.png" alt="UI example" width="200"/>
+<picture>
+  <source srcset="Images/UIexampleDARK.png" media="(prefers-color-scheme: dark)" />
+  <img src="Images/UIexampleLIGHT.png" alt="example UI" width="200"/>
+</picture> 
     </td>
   </tr>
 </table>
