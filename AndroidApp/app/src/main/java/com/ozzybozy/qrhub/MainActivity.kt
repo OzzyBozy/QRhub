@@ -116,8 +116,10 @@ class MainActivity : AppCompatActivity() {
             val qrImageView = view.findViewById<ImageView>(R.id.qrImage)
             val favButton = view.findViewById<CheckBox>(R.id.favButton)
 
+            nameEditText.isSaveEnabled = false
+            favButton.id = View.NO_ID
+
             nameEditText.setText(item.text)
-            favButton.isChecked = item.favorite
 
             val displayDateOnly: String = try {
                 val fullDateObject = dateTimeFormat.parse(item.dateTime)
@@ -161,9 +163,11 @@ class MainActivity : AppCompatActivity() {
                 }
             })
 
+            favButton.setOnCheckedChangeListener(null)
+            favButton.isChecked = item.favorite
             favButton.setOnCheckedChangeListener { _, isChecked ->
                 val itemToUpdate = qrList.find { it.id == itemId }
-                if (itemToUpdate != null) {
+                if (itemToUpdate != null && itemToUpdate.favorite != isChecked) {
                     itemToUpdate.favorite = isChecked
                     QRStorageHelper.saveQRList(this@MainActivity, qrList)
                     if (currentFilterType == FilterType.FAVORITE) {
