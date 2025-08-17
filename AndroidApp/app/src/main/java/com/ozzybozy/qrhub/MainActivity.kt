@@ -47,9 +47,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private enum class FilterType {
-        DATE, FAVORITE
+        DATE, ALPHABETICAL, FAVORITE, RENAMED
     }
     private var currentFilterType = FilterType.DATE
+    private var isAscending = true
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -82,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val filterOptions = arrayOf("Sort by Date", "Show Favorites")
+        val filterOptions = arrayOf("Date", "Alphabetical", "Favorite", "Renamed")
         val adapter = ArrayAdapter(this, R.layout.spinner_item_no_text, filterOptions)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.filterSpinner.adapter = adapter
@@ -91,12 +92,23 @@ class MainActivity : AppCompatActivity() {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 currentFilterType = when (position) {
                     0 -> FilterType.DATE
-                    1 -> FilterType.FAVORITE
+                    1 -> FilterType.ALPHABETICAL
+                    2 -> FilterType.FAVORITE
+                    3 -> FilterType.RENAMED
                     else -> FilterType.DATE
                 }
+                isAscending = true
+                binding.sortButton.isChecked = true
+                updateSortButtonIcon()
                 refreshQrDisplay()
             }
             override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+
+        binding.sortButton.setOnCheckedChangeListener { _, isChecked ->
+            isAscending = isChecked
+            updateSortButtonIcon()
+            refreshQrDisplay()
         }
 
         binding.scanButton.setOnClickListener {
@@ -105,15 +117,51 @@ class MainActivity : AppCompatActivity() {
 
         qrList.clear()
         qrList.addAll(QRStorageHelper.loadQRList(this))
+        updateSortButtonIcon()
         refreshQrDisplay()
+    }
+
+    private fun updateSortButtonIcon() {
+        val iconRes = when (currentFilterType) {
+            FilterType.DATE, FilterType.ALPHABETICAL -> {
+                if (isAscending) R.drawable.ic_ascending else R.drawable.ic_descending
+            }
+            FilterType.FAVORITE -> {
+                if (isAscending) R.drawable.ic_star_blue else R.drawable.ic_star_border_blue
+            }
+            FilterType.RENAMED -> {
+                if (isAscending) R.drawable.ic_tick else R.drawable.ic_cross
+            }
+        }
+        binding.sortButton.setBackgroundResource(iconRes)
     }
 
     private fun refreshQrDisplay() {
         binding.qrContainer.removeAllViews()
 
         val displayList = when (currentFilterType) {
-            FilterType.DATE -> qrList
-            FilterType.FAVORITE -> qrList.filter { it.favorite }
+            FilterType.DATE -> {
+                val comparator = compareBy<QRItem> {
+                    try {
+                        SimpleDateFormat("dd/MM/yy HH:mm:ss", Locale.getDefault()).parse(it.dateTime)
+                    } catch (e: ParseException) { null }
+                }
+                if (isAscending) qrList.sortedWith(comparator.reversed()) else qrList.sortedWith(comparator)
+            }
+            FilterType.ALPHABETICAL -> {
+                if (isAscending) qrList.sortedBy { it.text.lowercase(Locale.getDefault()) }
+                else qrList.sortedByDescending { it.text.lowercase(Locale.getDefault()) }
+            }
+            FilterType.FAVORITE -> {
+                qrList.filter { it.favorite == isAscending }.sortedByDescending {
+                    try { SimpleDateFormat("dd/MM/yy HH:mm:ss", Locale.getDefault()).parse(it.dateTime) } catch (e: ParseException) { null }
+                }
+            }
+            FilterType.RENAMED -> {
+                qrList.filter { (it.text != it.url) == isAscending }.sortedByDescending {
+                    try { SimpleDateFormat("dd/MM/yy HH:mm:ss", Locale.getDefault()).parse(it.dateTime) } catch (e: ParseException) { null }
+                }
+            }
         }
 
         for (item in displayList) {
