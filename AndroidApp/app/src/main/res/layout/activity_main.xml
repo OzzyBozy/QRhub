@@ -24,6 +24,16 @@
         android:background="?attr/qr_Background">
 
         <Button
+            android:id="@+id/settingsButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:background="@drawable/ic_settings"/>
+
+
+        <Button
             android:id="@+id/scanButton"
             android:layout_width="128dp"
             android:layout_height="64dp"

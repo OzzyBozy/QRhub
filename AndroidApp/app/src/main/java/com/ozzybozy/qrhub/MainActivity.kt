@@ -144,7 +144,7 @@ class MainActivity : AppCompatActivity() {
                 val comparator = compareBy<QRItem> {
                     try {
                         SimpleDateFormat("dd/MM/yy HH:mm:ss", Locale.getDefault()).parse(it.dateTime)
-                    } catch (e: ParseException) { null }
+                    } catch (_: ParseException) { null }
                 }
                 if (isAscending) qrList.sortedWith(comparator.reversed()) else qrList.sortedWith(comparator)
             }
@@ -154,12 +154,12 @@ class MainActivity : AppCompatActivity() {
             }
             FilterType.FAVORITE -> {
                 qrList.filter { it.favorite == isAscending }.sortedByDescending {
-                    try { SimpleDateFormat("dd/MM/yy HH:mm:ss", Locale.getDefault()).parse(it.dateTime) } catch (e: ParseException) { null }
+                    try { SimpleDateFormat("dd/MM/yy HH:mm:ss", Locale.getDefault()).parse(it.dateTime) } catch (_: ParseException) { null }
                 }
             }
             FilterType.RENAMED -> {
                 qrList.filter { (it.text != it.url) == isAscending }.sortedByDescending {
-                    try { SimpleDateFormat("dd/MM/yy HH:mm:ss", Locale.getDefault()).parse(it.dateTime) } catch (e: ParseException) { null }
+                    try { SimpleDateFormat("dd/MM/yy HH:mm:ss", Locale.getDefault()).parse(it.dateTime) } catch (_: ParseException) { null }
                 }
             }
         }
