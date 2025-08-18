@@ -14,18 +14,18 @@
     </string-array>
 
     <!-- Language Names (for display in spinner - these remain in their native form) -->
-    <string name="display_lang_english">English</string>
-    <string name="display_lang_italian">Italiano</string>
-    <string name="display_lang_german">Deutsch</string>
-    <string name="display_lang_french">Français</string>
-    <string name="display_lang_turkish">Türkçe</string>
-    <string name="display_lang_arabic">العربية</string>
-    <string name="display_lang_spanish">Español</string>
-    <string name="display_lang_hindi">हिंदी</string>
-    <string name="display_lang_japanese">日本語</string>
-    <string name="display_lang_korean">한국어</string>
-    <string name="display_lang_russian">Русский</string>
-    <string name="display_lang_chinese_simplified">简体中文</string>
+    <string name="display_lang_english" translatable="false">English</string>
+    <string name="display_lang_italian" translatable="false">Italiano</string>
+    <string name="display_lang_german" translatable="false">Deutsch</string>
+    <string name="display_lang_french" translatable="false">Français</string>
+    <string name="display_lang_turkish" translatable="false">Türkçe</string>
+    <string name="display_lang_arabic" translatable="false">العربية</string>
+    <string name="display_lang_spanish" translatable="false">Español</string>
+    <string name="display_lang_hindi" translatable="false">हिंदी</string>
+    <string name="display_lang_japanese" translatable="false">日本語</string>
+    <string name="display_lang_korean" translatable="false">한국어</string>
+    <string name="display_lang_russian" translatable="false">Русский</string>
+    <string name="display_lang_chinese_simplified" translatable="false">简体中文</string>
     <string-array name="language_display_names_array">
         <item>@string/display_lang_english</item>
         <item>@string/display_lang_italian</item>
@@ -44,8 +44,8 @@
     <!-- UI Text from activity_main.xml and MainActivity.kt -->
     <string name="text_add_new_qr">Add new</string>
     <string name="text_settings_title">Settings</string>
-    <string name="text_dark_mode_label">dark mode</string>
-    <string name="text_language_label">language</string>
+    <string name="text_dark_mode_label">Dark mode</string>
+    <string name="text_language_label">Language</string>
 
     <!-- Toast Messages -->
     <string name="toast_no_app_for_url">No app can handle this URL</string>

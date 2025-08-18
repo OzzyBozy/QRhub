@@ -8,6 +8,6 @@
 
     <string name="text_add_new_qr">Ajouter nouveau</string>
     <string name="text_settings_title">Paramètres</string>
-    <string name="text_dark_mode_label">mode sombre</string>
-    <string name="text_language_label">langue</string>
+    <string name="text_dark_mode_label">Mode sombre</string>
+    <string name="text_language_label">Langue</string>
 </resources>

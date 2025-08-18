@@ -82,6 +82,12 @@ class MainActivity : AppCompatActivity() {
         private const val KEY_SETTINGS_MENU_VISIBLE = "settings_menu_visible"
     }
 
+    override fun attachBaseContext(newBase: Context) {
+        val sharedPrefs = newBase.getSharedPreferences(ThemeUtils.PREFS_NAME, MODE_PRIVATE)
+        val language = sharedPrefs.getString("app_language", "en") ?: "en"
+        super.attachBaseContext(LocaleUtils.updateResources(newBase, language))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val themePrefsOnCreate = getSharedPreferences(ThemeUtils.PREFS_NAME, MODE_PRIVATE)
         val currentTheme = themePrefsOnCreate.getString(ThemeUtils.KEY_THEME, ThemeUtils.THEME_LIGHT) ?: ThemeUtils.THEME_LIGHT
@@ -159,8 +165,8 @@ class MainActivity : AppCompatActivity() {
         val languages = resources.getStringArray(R.array.language_display_names_array).toList()
         val savedLang = sharedPrefs.getString("app_language", "en") ?: "en"
 
-        val langAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, languages)
-        langAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        val langAdapter = ArrayAdapter(this, R.layout.custom_spinner_item_colored, languages)
+        langAdapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item_colored)
         binding.languageSpinner.adapter = langAdapter
 
         val savedIndex = languageCodes.indexOf(savedLang)
@@ -174,7 +180,6 @@ class MainActivity : AppCompatActivity() {
                 val currentSavedLang = sharedPrefs.getString("app_language", "en")
                 if (selectedLangCode != currentSavedLang) {
                     sharedPrefs.edit { putString("app_language", selectedLangCode) }
-                    LocaleUtils.setLocale(this@MainActivity, selectedLangCode)
                     recreate()
                 }
             }
@@ -299,20 +304,20 @@ class MainActivity : AppCompatActivity() {
                         val intent = Intent(Intent.ACTION_VIEW, item.url.toUri())
                         startActivity(intent)
                     } catch (_: ActivityNotFoundException) {
-                        Toast.makeText(this, "No app can handle this URL", Toast.LENGTH_SHORT).show() // TODO: String resource
+                        Toast.makeText(this, "No app can handle this URL", Toast.LENGTH_SHORT).show()
                     } catch (_: Exception) {
-                        Toast.makeText(this, "Invalid URL", Toast.LENGTH_SHORT).show() // TODO: String resource
+                        Toast.makeText(this, "Invalid URL", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(this, "No URL available for this item", Toast.LENGTH_SHORT).show() // TODO: String resource
+                    Toast.makeText(this, "No URL available for this item", Toast.LENGTH_SHORT).show()
                 }
             }
             binding.qrContainer.addView(itemBinding.root)
             itemBinding.root.setOnLongClickListener {
                 AlertDialog.Builder(this@MainActivity)
-                    .setTitle("Delete Item") // TODO: String resource
-                    .setMessage("Do you want to delete this item?") // TODO: String resource
-                    .setPositiveButton("Yes") { _, _ -> // TODO: String resource
+                    .setTitle("Delete Item")
+                    .setMessage("Do you want to delete this item?")
+                    .setPositiveButton("Yes") { _, _ ->
                         val itemToRemove = qrList.find { it.id == itemId }
                         if (itemToRemove != null) {
                             qrList.remove(itemToRemove)
@@ -320,7 +325,7 @@ class MainActivity : AppCompatActivity() {
                             refreshQrDisplay()
                         }
                     }
-                    .setNegativeButton("No", null) // TODO: String resource
+                    .setNegativeButton("No", null)
                     .show()
                 true
             }

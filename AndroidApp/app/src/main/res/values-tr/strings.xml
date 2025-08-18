@@ -8,6 +8,6 @@
 
     <string name="text_add_new_qr">Yeni ekle</string>
     <string name="text_settings_title">Ayarlar</string>
-    <string name="text_dark_mode_label">karanlık mod</string>
-    <string name="text_language_label">dil</string>
+    <string name="text_dark_mode_label">Karanlık mod</string>
+    <string name="text_language_label">Dil</string>
 </resources>
