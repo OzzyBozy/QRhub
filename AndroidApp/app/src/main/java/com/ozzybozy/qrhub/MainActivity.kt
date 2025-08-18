@@ -78,7 +78,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    companion object {
+        private const val KEY_SETTINGS_MENU_VISIBLE = "settings_menu_visible"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        val themePrefsOnCreate = getSharedPreferences(ThemeUtils.PREFS_NAME, MODE_PRIVATE)
+        val currentTheme = themePrefsOnCreate.getString(ThemeUtils.KEY_THEME, ThemeUtils.THEME_LIGHT) ?: ThemeUtils.THEME_LIGHT
+        ThemeUtils.applyTheme(currentTheme)
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -113,6 +121,64 @@ class MainActivity : AppCompatActivity() {
 
         binding.scanButton.setOnClickListener {
             checkCameraPermissionAndScan()
+        }
+
+        val settingsLayout = binding.settingsMenu
+        val settingsButton = binding.settingsButton
+        val settingsExitButton = binding.settingsExitButton
+        val sharedPrefs = getSharedPreferences(ThemeUtils.PREFS_NAME, MODE_PRIVATE)
+
+
+        settingsButton.setOnClickListener {
+            settingsLayout.visibility = View.VISIBLE
+            sharedPrefs.edit { putBoolean(KEY_SETTINGS_MENU_VISIBLE, true) }
+        }
+        settingsExitButton.setOnClickListener {
+            settingsLayout.visibility = View.GONE
+            sharedPrefs.edit { putBoolean(KEY_SETTINGS_MENU_VISIBLE, false) }
+        }
+
+        val settingsMenuVisible = sharedPrefs.getBoolean(KEY_SETTINGS_MENU_VISIBLE, false)
+        if (settingsMenuVisible) {
+            settingsLayout.visibility = View.VISIBLE
+        }
+
+
+        binding.darkModeSwitch.isChecked = currentTheme == ThemeUtils.THEME_DARK
+        binding.darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            val newThemePreference = if (isChecked) {
+                ThemeUtils.THEME_DARK
+            } else {
+                ThemeUtils.THEME_LIGHT
+            }
+            sharedPrefs.edit { putString(ThemeUtils.KEY_THEME, newThemePreference) }
+            ThemeUtils.applyThemeChangeAndRecreate(this)
+        }
+
+        val languageCodes = listOf("en", "it", "de", "fr", "tr", "ar", "es", "hi", "ja", "ko", "ru", "zh")
+        val languages = listOf("English", "Italiano", "Deutsch", "Français", "Türkçe", "العربية", "Español", " हिंदी", "日本語", "한국어", "Русский", "简体中文")
+        val savedLang = sharedPrefs.getString("app_language", "en") ?: "en"
+
+        val langAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, languages)
+        langAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.languageSpinner.adapter = langAdapter
+
+        val savedIndex = languageCodes.indexOf(savedLang)
+        if (savedIndex != -1) {
+            binding.languageSpinner.setSelection(savedIndex)
+        }
+
+        binding.languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val selectedLangCode = languageCodes[position]
+                val currentSavedLang = sharedPrefs.getString("app_language", "en")
+                if (selectedLangCode != currentSavedLang) {
+                    sharedPrefs.edit { putString("app_language", selectedLangCode) }
+                    LocaleUtils.setLocale(this@MainActivity, selectedLangCode)
+                    recreate()
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
         }
 
         qrList.clear()
