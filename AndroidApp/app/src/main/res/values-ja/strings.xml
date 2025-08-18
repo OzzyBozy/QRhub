@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">QRhub</string>
+
+    <string name="filter_by_date">日付</string>
+    <string name="filter_by_alphabetical">アルファベット順</string>
+    <string name="filter_by_favorite">お気に入り</string>
+    <string name="filter_by_renamed">名前変更済み</string>
+
+    <string name="text_add_new_qr">新規追加</string>
+    <string name="text_settings_title">設定</string>
+    <string name="text_dark_mode_label">ダークモード</string>
+    <string name="text_language_label">言語</string>
+</resources>

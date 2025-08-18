@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val filterOptions = arrayOf("Date", "Alphabetical", "Favorite", "Renamed")
+        val filterOptions = resources.getStringArray(R.array.filter_options_array)
         val adapter = ArrayAdapter(this, R.layout.spinner_item_no_text, filterOptions)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.filterSpinner.adapter = adapter
@@ -156,7 +156,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val languageCodes = listOf("en", "it", "de", "fr", "tr", "ar", "es", "hi", "ja", "ko", "ru", "zh")
-        val languages = listOf("English", "Italiano", "Deutsch", "Français", "Türkçe", "العربية", "Español", " हिंदी", "日本語", "한국어", "Русский", "简体中文")
+        val languages = resources.getStringArray(R.array.language_display_names_array).toList()
         val savedLang = sharedPrefs.getString("app_language", "en") ?: "en"
 
         val langAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, languages)
@@ -299,20 +299,20 @@ class MainActivity : AppCompatActivity() {
                         val intent = Intent(Intent.ACTION_VIEW, item.url.toUri())
                         startActivity(intent)
                     } catch (_: ActivityNotFoundException) {
-                        Toast.makeText(this, "No app can handle this URL", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "No app can handle this URL", Toast.LENGTH_SHORT).show() // TODO: String resource
                     } catch (_: Exception) {
-                        Toast.makeText(this, "Invalid URL", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Invalid URL", Toast.LENGTH_SHORT).show() // TODO: String resource
                     }
                 } else {
-                    Toast.makeText(this, "No URL available for this item", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "No URL available for this item", Toast.LENGTH_SHORT).show() // TODO: String resource
                 }
             }
             binding.qrContainer.addView(itemBinding.root)
             itemBinding.root.setOnLongClickListener {
                 AlertDialog.Builder(this@MainActivity)
-                    .setTitle("Delete Item")
-                    .setMessage("Do you want to delete this item?")
-                    .setPositiveButton("Yes") { _, _ ->
+                    .setTitle("Delete Item") // TODO: String resource
+                    .setMessage("Do you want to delete this item?") // TODO: String resource
+                    .setPositiveButton("Yes") { _, _ -> // TODO: String resource
                         val itemToRemove = qrList.find { it.id == itemId }
                         if (itemToRemove != null) {
                             qrList.remove(itemToRemove)
@@ -320,7 +320,7 @@ class MainActivity : AppCompatActivity() {
                             refreshQrDisplay()
                         }
                     }
-                    .setNegativeButton("No", null)
+                    .setNegativeButton("No", null) // TODO: String resource
                     .show()
                 true
             }

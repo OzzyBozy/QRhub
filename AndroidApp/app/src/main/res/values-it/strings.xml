@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">QRhub</string>
+
+    <string name="filter_by_date">Data</string>
+    <string name="filter_by_alphabetical">Alfabetico</string>
+    <string name="filter_by_favorite">Preferito</string>
+    <string name="filter_by_renamed">Rinominato</string>
+
+    <string name="text_add_new_qr">Aggiungi nuovo</string>
+    <string name="text_settings_title">Impostazioni</string>
+    <string name="text_dark_mode_label">modalità scura</string>
+    <string name="text_language_label">lingua</string>
+</resources>

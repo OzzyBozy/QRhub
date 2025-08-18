@@ -1,3 +1,60 @@
 <resources>
     <string name="app_name">QRhub</string>
+
+    <!-- Filter Options -->
+    <string name="filter_by_date">Date</string>
+    <string name="filter_by_alphabetical">Alphabetical</string>
+    <string name="filter_by_favorite">Favorite</string>
+    <string name="filter_by_renamed">Renamed</string>
+    <string-array name="filter_options_array">
+        <item>@string/filter_by_date</item>
+        <item>@string/filter_by_alphabetical</item>
+        <item>@string/filter_by_favorite</item>
+        <item>@string/filter_by_renamed</item>
+    </string-array>
+
+    <!-- Language Names (for display in spinner - these remain in their native form) -->
+    <string name="display_lang_english">English</string>
+    <string name="display_lang_italian">Italiano</string>
+    <string name="display_lang_german">Deutsch</string>
+    <string name="display_lang_french">Français</string>
+    <string name="display_lang_turkish">Türkçe</string>
+    <string name="display_lang_arabic">العربية</string>
+    <string name="display_lang_spanish">Español</string>
+    <string name="display_lang_hindi">हिंदी</string>
+    <string name="display_lang_japanese">日本語</string>
+    <string name="display_lang_korean">한국어</string>
+    <string name="display_lang_russian">Русский</string>
+    <string name="display_lang_chinese_simplified">简体中文</string>
+    <string-array name="language_display_names_array">
+        <item>@string/display_lang_english</item>
+        <item>@string/display_lang_italian</item>
+        <item>@string/display_lang_german</item>
+        <item>@string/display_lang_french</item>
+        <item>@string/display_lang_turkish</item>
+        <item>@string/display_lang_arabic</item>
+        <item>@string/display_lang_spanish</item>
+        <item>@string/display_lang_hindi</item>
+        <item>@string/display_lang_japanese</item>
+        <item>@string/display_lang_korean</item>
+        <item>@string/display_lang_russian</item>
+        <item>@string/display_lang_chinese_simplified</item>
+    </string-array>
+
+    <!-- UI Text from activity_main.xml and MainActivity.kt -->
+    <string name="text_add_new_qr">Add new</string>
+    <string name="text_settings_title">Settings</string>
+    <string name="text_dark_mode_label">dark mode</string>
+    <string name="text_language_label">language</string>
+
+    <!-- Toast Messages -->
+    <string name="toast_no_app_for_url">No app can handle this URL</string>
+    <string name="toast_invalid_url">Invalid URL</string>
+    <string name="toast_no_url_available">No URL available for this item</string>
+
+    <!-- AlertDialog Texts -->
+    <string name="alert_delete_item_title">Delete Item</string>
+    <string name="alert_delete_item_message">Do you want to delete this item?</string>
+    <string name="alert_button_yes">Yes</string>
+    <string name="alert_button_no">No</string>
 </resources>

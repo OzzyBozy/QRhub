@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">QRhub</string>
+
+    <string name="filter_by_date">日期</string>
+    <string name="filter_by_alphabetical">字母顺序</string>
+    <string name="filter_by_favorite">收藏</string>
+    <string name="filter_by_renamed">已重命名</string>
+
+    <string name="text_add_new_qr">新增</string>
+    <string name="text_settings_title">设置</string>
+    <string name="text_dark_mode_label">深色模式</string>
+    <string name="text_language_label">语言</string>
+</resources>

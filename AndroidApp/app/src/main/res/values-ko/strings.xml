@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">QRhub</string>
+
+    <string name="filter_by_date">날짜</string>
+    <string name="filter_by_alphabetical">알파벳 순</string>
+    <string name="filter_by_favorite">즐겨찾기</string>
+    <string name="filter_by_renamed">이름 변경됨</string>
+
+    <string name="text_add_new_qr">새로 추가</string>
+    <string name="text_settings_title">설정</string>
+    <string name="text_dark_mode_label">다크 모드</string>
+    <string name="text_language_label">언어</string>
+</resources>

@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">QRhub</string>
+
+    <string name="filter_by_date">तिथि</string>
+    <string name="filter_by_alphabetical">वर्णानुक्रमिक</string>
+    <string name="filter_by_favorite">पसंदीदा</string>
+    <string name="filter_by_renamed">नाम बदला गया</string>
+
+    <string name="text_add_new_qr">नया जोड़ें</string>
+    <string name="text_settings_title">समायोजन</string>
+    <string name="text_dark_mode_label">डार्क मोड</string>
+    <string name="text_language_label">भाषा</string>
+</resources>

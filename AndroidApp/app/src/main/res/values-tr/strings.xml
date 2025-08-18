@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">QRhub</string>
+
+    <string name="filter_by_date">Tarih</string>
+    <string name="filter_by_alphabetical">Alfabetik</string>
+    <string name="filter_by_favorite">Favori</string>
+    <string name="filter_by_renamed">Yeniden Adlandırılmış</string>
+
+    <string name="text_add_new_qr">Yeni ekle</string>
+    <string name="text_settings_title">Ayarlar</string>
+    <string name="text_dark_mode_label">karanlık mod</string>
+    <string name="text_language_label">dil</string>
+</resources>
